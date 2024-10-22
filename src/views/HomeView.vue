@@ -16,21 +16,23 @@ export default {
     }
 
     const onInput = async () => {
-      console.log(search.value)
-      const params = {
-        query: search.value,
-        display: 5,
+      if (search.value != '') {
+        const params = {
+          query: search.value,
+          display: 5,
+        }
+        const result = await axios.get('/naver/search/local.json', {
+          params,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json',
+            'X-Naver-Client-Id': 'Ar_xVXx4bqK9Ad6afc0w',
+            'X-Naver-Client-Secret': 'Av6fnTgyGe',
+          },
+        })
+
+        regionResult.value = result.data.items
       }
-      const result = await axios.get('/naver/search/local.json', {
-        params,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json',
-          'X-Naver-Client-Id': 'Ar_xVXx4bqK9Ad6afc0w',
-          'X-Naver-Client-Secret': 'Av6fnTgyGe',
-        },
-      })
-      console.log(result.data)
     }
 
     const onSearch = async () => {
@@ -46,7 +48,8 @@ export default {
         'http://apis.data.go.kr/B552657/ErmctInfoInqireService/getEmrrmRltmUsefulSckbdInfoInqire',
         { params },
       )
-      console.log(result.data)
+
+      console.log(result)
     }
 
     return { search, regionResult, onLoadMap, onSearch, onInput }
@@ -55,15 +58,19 @@ export default {
 </script>
 
 <template>
-  <input
-    v-model="search"
-    placeholder="검색"
-    @input="onInput"
-    @keyup.enter="onSearch"
-  />
-
-  {{ regionResult }}
+  <div>
+    <input
+      v-model="search"
+      placeholder="검색"
+      @input="onInput"
+      @keyup.enter="onSearch"
+    />
+  </div>
   <br />
+
+  <div v-for="region of regionResult" :key="region">
+    {{ region.title }}
+  </div>
   <NaverMap
     style="width: 100vw; height: 100vh"
     clientId="y7hgcvgnrx"
