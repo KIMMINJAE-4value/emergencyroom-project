@@ -1,11 +1,13 @@
 <script lang="ts">
 import { ref } from 'vue'
-import { NaverMap } from '@naver-maps/vue'
+import { NaverMap, NaverMarker } from '@naver-maps/vue'
 import axios from 'axios'
+import type { location } from '../types'
 
 export default {
   components: {
     NaverMap,
+    NaverMarker,
   },
   setup() {
     const search = ref('')
@@ -35,7 +37,12 @@ export default {
       }
     }
 
-    const onSearch = async () => {
+    const marker = ref()
+    const onLoadMarker = (markerObject: object) => {
+      marker.value = markerObject
+    }
+
+    const onSearchEmergencyRoom = async () => {
       const params = {
         STAGE1: '서울특별시',
         STAGE2: '강남구',
@@ -52,7 +59,19 @@ export default {
       console.log(result)
     }
 
-    return { search, regionResult, onLoadMap, onSearch, onInput }
+    const onSearchLocation = async (data: location) => {
+      console.log(data.address)
+    }
+
+    return {
+      search,
+      regionResult,
+      onLoadMap,
+      onSearchEmergencyRoom,
+      onInput,
+      onSearchLocation,
+      onLoadMarker,
+    }
   },
 }
 </script>
@@ -63,12 +82,16 @@ export default {
       v-model="search"
       placeholder="검색"
       @input="onInput"
-      @keyup.enter="onSearch"
+      @keyup.enter="onSearchEmergencyRoom"
     />
   </div>
   <br />
 
-  <div v-for="region of regionResult" :key="region">
+  <div
+    v-for="region of regionResult"
+    :key="region"
+    @click="onSearchLocation(region)"
+  >
     {{ region.title }}
   </div>
   <NaverMap
@@ -81,5 +104,18 @@ export default {
       zoom: 14,
     }"
   >
+    <naver-marker
+      :latitude="37.51347"
+      :longitude="127.041722"
+      @onLoad="onLoadMarker($event)"
+    >
+    </naver-marker>
+
+    <naver-marker
+      :latitude="37.41347"
+      :longitude="127.041722"
+      @onLoad="onLoadMarker($event)"
+    >
+    </naver-marker>
   </NaverMap>
 </template>
