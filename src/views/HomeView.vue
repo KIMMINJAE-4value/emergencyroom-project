@@ -21,18 +21,15 @@ export default {
         query: search.value,
         display: 5,
       }
-      const result = await axios.get(
-        'https://openapi.naver.com/v1/search/local.json',
-        {
-          params,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'application/json',
-            'X-Naver-Client-Id': 'Ar_xVXx4bqK9Ad6afc0w',
-            'X-Naver-Client-Secret': 'Av6fnTgyGe',
-          },
+      const result = await axios.get('/naver/search/local.json', {
+        params,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+          'X-Naver-Client-Id': 'Ar_xVXx4bqK9Ad6afc0w',
+          'X-Naver-Client-Secret': 'Av6fnTgyGe',
         },
-      )
+      })
       console.log(result.data)
     }
 
