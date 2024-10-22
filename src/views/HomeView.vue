@@ -9,10 +9,33 @@ export default {
   },
   setup() {
     const search = ref('')
+    const regionResult = ref()
     const onLoadMap = (map: naver.maps.Map) => {
       console.log(map)
       // 지도 로드 완료 시 실행되는 함수
     }
+
+    const onInput = async () => {
+      console.log(search.value)
+      const params = {
+        query: search.value,
+        display: 5,
+      }
+      const result = await axios.get(
+        'https://openapi.naver.com/v1/search/local.json',
+        {
+          params,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json',
+            'X-Naver-Client-Id': 'Ar_xVXx4bqK9Ad6afc0w',
+            'X-Naver-Client-Secret': 'Av6fnTgyGe',
+          },
+        },
+      )
+      console.log(result.data)
+    }
+
     const onSearch = async () => {
       const params = {
         STAGE1: '서울특별시',
@@ -22,22 +45,28 @@ export default {
         serviceKey:
           'Y7vAdTl7q7jOH5H6IKsEyWH0/GEO20KLTe+wxnTDJYmC8ewsrBJ7wIekeCwBMxTvgpNlGbxsvKijRsQN2xcPxQ==',
       }
-      const data = await axios.get(
+      const result = await axios.get(
         'http://apis.data.go.kr/B552657/ErmctInfoInqireService/getEmrrmRltmUsefulSckbdInfoInqire',
         { params },
       )
-      console.log(data.data)
+      console.log(result.data)
     }
 
-    return { search, onLoadMap, onSearch }
+    return { search, regionResult, onLoadMap, onSearch, onInput }
   },
 }
 </script>
 
 <template>
-  <input v-model="search" placeholder="검색" @input="onSearch" />
-  <br />
+  <input
+    v-model="search"
+    placeholder="검색"
+    @input="onInput"
+    @keyup.enter="onSearch"
+  />
 
+  {{ regionResult }}
+  <br />
   <NaverMap
     style="width: 100vw; height: 100vh"
     clientId="y7hgcvgnrx"
