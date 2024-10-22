@@ -7,18 +7,21 @@ export default {
     NaverMap,
   },
   setup() {
-    const hello = ref()
+    const search = ref('')
     const onLoadMap = (map: naver.maps.Map) => {
       console.log(map)
       // 지도 로드 완료 시 실행되는 함수
     }
 
-    return { hello, onLoadMap }
+    return { search, onLoadMap }
   },
 }
 </script>
 
 <template>
+  <input v-model="search" placeholder="검색" />
+  <br />
+
   <NaverMap
     style="width: 100vw; height: 100vh"
     clientId="y7hgcvgnrx"
