@@ -1,9 +1,14 @@
-<script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+<script lang="ts">
+import { ref } from 'vue'
+
+export default {
+  setup() {
+    const hello = ref()
+    return { hello }
+  },
+}
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
-  </main>
+  <div>vue</div>
 </template>
