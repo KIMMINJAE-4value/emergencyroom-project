@@ -10,11 +10,13 @@ export default {
     NaverMarker,
   },
   setup() {
+    const mapRef = ref()
     const search = ref('')
     const regionResult = ref()
-    const onLoadMap = (map: naver.maps.Map) => {
-      console.log(map)
-      // 지도 로드 완료 시 실행되는 함수
+    const latitude = ref(37.51347)
+    const longitude = ref(127.041722)
+    const onLoadMap = (mapObject: naver.maps.Map) => {
+      mapRef.value = mapObject
     }
 
     const onInput = async () => {
@@ -56,16 +58,30 @@ export default {
         { params },
       )
 
-      console.log(result)
+      console.log('2', result)
+
+      mapRef.value.panToBounds(
+        new naver.maps.LatLngBounds(
+          new naver.maps.LatLng(37.2380651, 131.8562652),
+          new naver.maps.LatLng(37.2444436, 131.8786475),
+        ),
+      )
     }
 
     const onSearchLocation = async (data: location) => {
-      console.log(data.address)
+      const tm128 = new naver.maps.LatLng(data.mapy, data.mapx)
+
+      latitude.value = tm128.lat()
+      longitude.value = tm128.lng()
+      onSearchEmergencyRoom()
     }
 
     return {
       search,
       regionResult,
+      latitude,
+      longitude,
+      mapRef,
       onLoadMap,
       onSearchEmergencyRoom,
       onInput,
@@ -99,8 +115,8 @@ export default {
     clientId="y7hgcvgnrx"
     @onLoaded="onLoadMap"
     :mapOptions="{
-      latitude: 37.51347,
-      longitude: 127.041722,
+      latitude: latitude,
+      longitude: longitude,
       zoom: 14,
     }"
   >
