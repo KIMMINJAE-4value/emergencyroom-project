@@ -13,7 +13,7 @@ app.use(router)
 app.use(VueAxios, axios)
 
 app.use(createNaverMap, {
-  clientId: 'y7hgcvgnrx',
+  clientId: import.meta.env.VITE_NAVER_API_CLIENT_ID,
   subModules: ['geocoder'],
 })
 
