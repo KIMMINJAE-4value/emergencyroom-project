@@ -1,22 +1,23 @@
 <script lang="ts">
 import { ref } from 'vue'
-import { NaverMap, NaverMarker } from '@naver-maps/vue'
+import { NaverMap } from 'vue3-naver-maps'
 import axios from 'axios'
 import type { location } from '../types'
 
 export default {
   components: {
     NaverMap,
-    NaverMarker,
+    // NaverMarker,
   },
   setup() {
     const mapRef = ref()
     const search = ref('')
     const regionResult = ref()
-    const latitude = ref(37.51347)
-    const longitude = ref(127.041722)
-    const onLoadMap = (mapObject: naver.maps.Map) => {
-      mapRef.value = mapObject
+    const onLoadMap = (map: any) => {
+      mapRef.value = map
+      console.log(1, map)
+      const latLng = new window.naver.maps.LatLng(37.51347, 127.041722) // window 생략 가능
+      map.setCenter(latLng) // Change Map Center
     }
 
     const onInput = async () => {
@@ -57,30 +58,23 @@ export default {
         'http://apis.data.go.kr/B552657/ErmctInfoInqireService/getEmrrmRltmUsefulSckbdInfoInqire',
         { params },
       )
-
-      console.log('2', result)
-
-      mapRef.value.panToBounds(
-        new naver.maps.LatLngBounds(
-          new naver.maps.LatLng(37.2380651, 131.8562652),
-          new naver.maps.LatLng(37.2444436, 131.8786475),
-        ),
-      )
     }
 
     const onSearchLocation = async (data: location) => {
-      const tm128 = new naver.maps.LatLng(data.mapy, data.mapx)
+      console.log('1', data)
+      const tm128 = new window.naver.maps.Point(data.mapx, data.mapy)
+      console.log('2', tm128)
+      const latLng = window.naver.maps.TransCoord.fromTM128ToLatLng(tm128)
+      console.log('3', latLng)
 
-      latitude.value = tm128.lat()
-      longitude.value = tm128.lng()
+      mapRef.value.setCenter(new window.naver.maps.LatLng(39.51347, 129.041722))
+      console.log(mapRef.value)
       onSearchEmergencyRoom()
     }
 
     return {
       search,
       regionResult,
-      latitude,
-      longitude,
       mapRef,
       onLoadMap,
       onSearchEmergencyRoom,
@@ -110,28 +104,18 @@ export default {
   >
     {{ region.title }}
   </div>
-  <NaverMap
-    style="width: 100vw; height: 100vh"
-    clientId="y7hgcvgnrx"
-    @onLoaded="onLoadMap"
-    :mapOptions="{
-      latitude: latitude,
-      longitude: longitude,
-      zoom: 14,
-    }"
+  <NaverMap style="width: 100vw; height: 100vh" @onLoad="onLoadMap"> </NaverMap>
+  <!-- <naver-marker
+    :latitude="37.51347"
+    :longitude="127.041722"
+    @onLoad="onLoadMarker($event)"
   >
-    <naver-marker
-      :latitude="37.51347"
-      :longitude="127.041722"
-      @onLoad="onLoadMarker($event)"
-    >
-    </naver-marker>
+  </naver-marker>
 
-    <naver-marker
-      :latitude="37.41347"
-      :longitude="127.041722"
-      @onLoad="onLoadMarker($event)"
-    >
-    </naver-marker>
-  </NaverMap>
+  <naver-marker
+    :latitude="37.41347"
+    :longitude="127.041722"
+    @onLoad="onLoadMarker($event)"
+  >
+  </naver-marker> -->
 </template>
