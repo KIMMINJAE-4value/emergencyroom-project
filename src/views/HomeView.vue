@@ -15,28 +15,28 @@ export default {
     const regionResult = ref()
     const onLoadMap = (map: any) => {
       mapRef.value = map
-      console.log(1, map)
       const latLng = new window.naver.maps.LatLng(37.51347, 127.041722) // window 생략 가능
       map.setCenter(latLng) // Change Map Center
     }
 
     const onInput = async () => {
       if (search.value != '') {
-        const params = {
-          query: search.value,
-          display: 5,
-        }
-        const result = await axios.get('/naver/search/local.json', {
-          params,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'application/json',
-            'X-Naver-Client-Id': 'Ar_xVXx4bqK9Ad6afc0w',
-            'X-Naver-Client-Secret': 'Av6fnTgyGe',
+        naver.maps.Service.geocode(
+          {
+            query: search.value,
           },
-        })
+          (status: any, response: any) => {
+            if (status !== naver.maps.Service.Status.OK) {
+              return alert('Something wrong!')
+            }
 
-        regionResult.value = result.data.items
+            let result = response.v2 // 검색 결과의 컨테이너
+            let items = result.addresses // 검색 결과의 배열
+            regionResult.value = result.addresses
+
+            // do Something
+          },
+        )
       }
     }
 
@@ -61,14 +61,9 @@ export default {
     }
 
     const onSearchLocation = async (data: location) => {
-      console.log('1', data)
-      const tm128 = new window.naver.maps.Point(data.mapx, data.mapy)
-      console.log('2', tm128)
-      const latLng = window.naver.maps.TransCoord.fromTM128ToLatLng(tm128)
-      console.log('3', latLng)
+      console.log(data)
 
-      mapRef.value.setCenter(new window.naver.maps.LatLng(39.51347, 129.041722))
-      console.log(mapRef.value)
+      mapRef.value.setCenter(new naver.maps.LatLng(data.y, data.x))
       onSearchEmergencyRoom()
     }
 
@@ -102,7 +97,7 @@ export default {
     :key="region"
     @click="onSearchLocation(region)"
   >
-    {{ region.title }}
+    {{ region.roadAddress }}
   </div>
   <NaverMap style="width: 100vw; height: 100vh" @onLoad="onLoadMap"> </NaverMap>
   <!-- <naver-marker
