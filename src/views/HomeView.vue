@@ -52,13 +52,9 @@ export default {
           addressElements[1].longName != '' ? addressElements[1].longName : '',
         pageNo: 1,
         numOfRows: 10,
-        serviceKey:
-          'Y7vAdTl7q7jOH5H6IKsEyWH0/GEO20KLTe+wxnTDJYmC8ewsrBJ7wIekeCwBMxTvgpNlGbxsvKijRsQN2xcPxQ==',
+        serviceKey: import.meta.env.VITE_API_SERVICE_KEY,
       }
-      const result = await axios.get(
-        'https://apis.data.go.kr/B552657/ErmctInfoInqireService/getEgytListInfoInqire',
-        { params },
-      )
+      const result = await axios.get(import.meta.env.VITE_API_URI, { params })
 
       console.log('res', result.data)
     }
