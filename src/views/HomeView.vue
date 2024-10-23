@@ -7,12 +7,12 @@ import type { location } from '../types'
 export default {
   components: {
     NaverMap,
-    // NaverMarker,
   },
   setup() {
     const mapRef = ref()
     const search = ref('')
     const regionResult = ref()
+    const addressResult = ref()
     const onLoadMap = (map: any) => {
       mapRef.value = map
       const latLng = new window.naver.maps.LatLng(37.51347, 127.041722) // window 생략 가능
@@ -20,6 +20,7 @@ export default {
     }
 
     const onInput = async () => {
+      console.log(search.value)
       if (search.value != '') {
         naver.maps.Service.geocode(
           {
@@ -56,7 +57,13 @@ export default {
       }
       const result = await axios.get(import.meta.env.VITE_API_URI, { params })
 
-      console.log('res', result.data)
+      addressResult.value = result.data.response.body.items.item
+
+      console.log('res', result.data.response.body.items.item)
+      var marker = new naver.maps.Marker({
+        position: new naver.maps.LatLng(37.3595704, 127.105399),
+        map: mapRef.value,
+      })
     }
 
     const onSearchLocation = async (data: location) => {
@@ -70,6 +77,7 @@ export default {
       search,
       regionResult,
       mapRef,
+      addressResult,
       onLoadMap,
       onSearchEmergencyRoom,
       onInput,
@@ -94,17 +102,4 @@ export default {
     {{ region.roadAddress }}
   </div>
   <NaverMap style="width: 100vw; height: 100vh" @onLoad="onLoadMap"> </NaverMap>
-  <!-- <naver-marker
-    :latitude="37.51347"
-    :longitude="127.041722"
-    @onLoad="onLoadMarker($event)"
-  >
-  </naver-marker>
-
-  <naver-marker
-    :latitude="37.41347"
-    :longitude="127.041722"
-    @onLoad="onLoadMarker($event)"
-  >
-  </naver-marker> -->
 </template>
