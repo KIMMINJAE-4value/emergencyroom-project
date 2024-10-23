@@ -27,15 +27,8 @@ export default {
             query: search.value,
           },
           (status: any, response: any) => {
-            if (status !== naver.maps.Service.Status.OK) {
-              return alert('Something wrong!')
-            }
-
             let result = response.v2 // 검색 결과의 컨테이너
-            let items = result.addresses // 검색 결과의 배열
             regionResult.value = result.addresses
-
-            // do Something
           },
         )
       }
@@ -60,9 +53,12 @@ export default {
       addressResult.value = result.data.response.body.items.item
 
       console.log('res', result.data.response.body.items.item)
-      var marker = new naver.maps.Marker({
-        position: new naver.maps.LatLng(37.3595704, 127.105399),
-        map: mapRef.value,
+
+      result.data.response.body.items.item.forEach((element: any) => {
+        let marker = new naver.maps.Marker({
+          position: new naver.maps.LatLng(element.wgs84Lat, element.wgs84Lon),
+          map: mapRef.value,
+        })
       })
     }
 
