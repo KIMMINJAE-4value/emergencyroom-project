@@ -19,8 +19,8 @@ export default {
       map.setCenter(latLng) // Change Map Center
     }
 
-    const onInput = async () => {
-      console.log(search.value)
+    const onInput = async (event: any) => {
+      search.value = (event.target as HTMLInputElement).value
       if (search.value != '') {
         naver.maps.Service.geocode(
           {
@@ -86,7 +86,7 @@ export default {
 
 <template>
   <div>
-    <input v-model="search" placeholder="검색" @input="onInput" />
+    <input placeholder="검색" @input="onInput" type="text" />
   </div>
   <br />
 
