@@ -19,6 +19,7 @@ export default {
       mapRef.value = map
       const latLng = new window.naver.maps.LatLng(37.51347, 127.041722)
       map.setCenter(latLng) // Change Map Center
+      mapRef.value.setZoom(12, true)
     }
 
     const onInput = async (event: any) => {
@@ -58,7 +59,9 @@ export default {
       })
       marker.value = []
 
-      if (Array.isArray(result.data.response.body.items.item)) {
+      if (result.data.response.body.items.item == undefined) {
+        alert('데이터가 없습니다.')
+      } else if (Array.isArray(result.data.response.body.items.item)) {
         result.data.response.body.items.item.forEach(
           (element: any, i: number) => {
             if (i === 0) {
@@ -73,7 +76,7 @@ export default {
               ),
               map: mapRef.value,
             })
-
+            mapRef.value.setZoom(12, true)
             markers.value.push(marker)
           },
         )
@@ -92,11 +95,12 @@ export default {
             addressResult.value.wgs84Lon,
           ),
         )
+        mapRef.value.setZoom(12, true)
       }
     }
 
-    const onSearchLocation = async (data: location) => {
-      onSearchEmergencyRoom(data.addressElements)
+    const onSearchLocation = (data: location) => {
+      if (data != undefined) onSearchEmergencyRoom(data.addressElements)
     }
 
     return {
@@ -116,7 +120,12 @@ export default {
 
 <template>
   <div>
-    <input placeholder="검색" @input="onInput" type="text" />
+    <input
+      placeholder="검색"
+      @input="onInput"
+      @keydown.enter="onSearchLocation(regionResult[0])"
+      type="text"
+    />
   </div>
 
   <div
