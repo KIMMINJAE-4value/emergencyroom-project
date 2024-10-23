@@ -110,7 +110,6 @@ export default {
   <div>
     <input placeholder="검색" @input="onInput" type="text" />
   </div>
-  <br />
 
   <div
     v-for="region of regionResult"
@@ -119,5 +118,8 @@ export default {
   >
     {{ region.roadAddress }}
   </div>
-  <NaverMap style="width: 100vw; height: 100vh" @onLoad="onLoadMap"> </NaverMap>
+  <div>
+    <NaverMap style="width: 100vw; height: 100vh" @onLoad="onLoadMap">
+    </NaverMap>
+  </div>
 </template>
