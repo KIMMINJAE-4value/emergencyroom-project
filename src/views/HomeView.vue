@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { NaverMap } from 'vue3-naver-maps'
 import axios from 'axios'
 import type { location } from '../types'
+declare let naver: any
 
 export default {
   components: {
@@ -51,8 +52,6 @@ export default {
       const result = await axios.get(import.meta.env.VITE_API_URI, { params })
 
       addressResult.value = result.data.response.body.items.item
-
-      console.log('res', result.data.response.body.items.item)
 
       result.data.response.body.items.item.forEach((element: any) => {
         let marker = new naver.maps.Marker({
