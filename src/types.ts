@@ -6,7 +6,6 @@ export interface location {
 }
 declare global {
   interface Window {
-    Kakao: any
     naver: any
   }
 }
