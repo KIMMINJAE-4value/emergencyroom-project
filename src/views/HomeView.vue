@@ -45,26 +45,29 @@ export default {
       marker.value = markerObject
     }
 
-    const onSearchEmergencyRoom = async () => {
+    const onSearchEmergencyRoom = async (addressElements: Array<any>) => {
       const params = {
-        STAGE1: '서울특별시',
-        STAGE2: '강남구',
+        Q0: addressElements[0].longName,
+        Q1:
+          addressElements[1].longName != '' ? addressElements[1].longName : '',
         pageNo: 1,
-        numOfRows: 30,
+        numOfRows: 10,
         serviceKey:
           'Y7vAdTl7q7jOH5H6IKsEyWH0/GEO20KLTe+wxnTDJYmC8ewsrBJ7wIekeCwBMxTvgpNlGbxsvKijRsQN2xcPxQ==',
       }
       const result = await axios.get(
-        'http://apis.data.go.kr/B552657/ErmctInfoInqireService/getEmrrmRltmUsefulSckbdInfoInqire',
+        'https://apis.data.go.kr/B552657/ErmctInfoInqireService/getEgytListInfoInqire',
         { params },
       )
+
+      console.log('res', result.data)
     }
 
     const onSearchLocation = async (data: location) => {
-      console.log(data)
+      console.log(data.addressElements)
 
       mapRef.value.setCenter(new naver.maps.LatLng(data.y, data.x))
-      onSearchEmergencyRoom()
+      onSearchEmergencyRoom(data.addressElements)
     }
 
     return {
@@ -83,12 +86,7 @@ export default {
 
 <template>
   <div>
-    <input
-      v-model="search"
-      placeholder="검색"
-      @input="onInput"
-      @keyup.enter="onSearchEmergencyRoom"
-    />
+    <input v-model="search" placeholder="검색" @input="onInput" />
   </div>
   <br />
 
