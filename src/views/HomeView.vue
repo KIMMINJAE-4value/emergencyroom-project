@@ -53,18 +53,41 @@ export default {
 
       addressResult.value = result.data.response.body.items.item
 
-      result.data.response.body.items.item.forEach((element: any) => {
-        let marker = new naver.maps.Marker({
-          position: new naver.maps.LatLng(element.wgs84Lat, element.wgs84Lon),
+      if (Array.isArray(result.data.response.body.items.item)) {
+        result.data.response.body.items.item.forEach(
+          (element: any, i: number) => {
+            if (i === 0) {
+              mapRef.value.setCenter(
+                new naver.maps.LatLng(element.wgs84Lat, element.wgs84Lon),
+              )
+            }
+            new naver.maps.Marker({
+              position: new naver.maps.LatLng(
+                element.wgs84Lat,
+                element.wgs84Lon,
+              ),
+              map: mapRef.value,
+            })
+          },
+        )
+      } else {
+        new naver.maps.Marker({
+          position: new naver.maps.LatLng(
+            addressResult.value.wgs84Lat,
+            addressResult.value.wgs84Lon,
+          ),
           map: mapRef.value,
         })
-      })
+        mapRef.value.setCenter(
+          new naver.maps.LatLng(
+            addressResult.value.wgs84Lat,
+            addressResult.value.wgs84Lon,
+          ),
+        )
+      }
     }
 
     const onSearchLocation = async (data: location) => {
-      console.log(data.addressElements)
-
-      mapRef.value.setCenter(new naver.maps.LatLng(data.y, data.x))
       onSearchEmergencyRoom(data.addressElements)
     }
 
