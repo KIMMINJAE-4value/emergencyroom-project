@@ -14,6 +14,7 @@ export default {
     const search = ref('')
     const regionResult = ref()
     const addressResult = ref()
+    const markers = ref<any[]>([])
     const onLoadMap = (map: any) => {
       mapRef.value = map
       const latLng = new window.naver.maps.LatLng(37.51347, 127.041722)
@@ -52,6 +53,10 @@ export default {
       const result = await axios.get(import.meta.env.VITE_API_URI, { params })
 
       addressResult.value = result.data.response.body.items.item
+      markers.value.forEach(marker => {
+        marker.setMap(null)
+      })
+      marker.value = []
 
       if (Array.isArray(result.data.response.body.items.item)) {
         result.data.response.body.items.item.forEach(
@@ -61,23 +66,26 @@ export default {
                 new naver.maps.LatLng(element.wgs84Lat, element.wgs84Lon),
               )
             }
-            new naver.maps.Marker({
+            let marker = new naver.maps.Marker({
               position: new naver.maps.LatLng(
                 element.wgs84Lat,
                 element.wgs84Lon,
               ),
               map: mapRef.value,
             })
+
+            markers.value.push(marker)
           },
         )
       } else {
-        new naver.maps.Marker({
+        let marker = new naver.maps.Marker({
           position: new naver.maps.LatLng(
             addressResult.value.wgs84Lat,
             addressResult.value.wgs84Lon,
           ),
           map: mapRef.value,
         })
+        markers.value.push(marker)
         mapRef.value.setCenter(
           new naver.maps.LatLng(
             addressResult.value.wgs84Lat,
