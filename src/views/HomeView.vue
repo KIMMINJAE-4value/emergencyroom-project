@@ -16,7 +16,7 @@ export default {
     const addressResult = ref()
     const onLoadMap = (map: any) => {
       mapRef.value = map
-      const latLng = new window.naver.maps.LatLng(37.51347, 127.041722) // window 생략 가능
+      const latLng = new window.naver.maps.LatLng(37.51347, 127.041722)
       map.setCenter(latLng) // Change Map Center
     }
 
@@ -28,7 +28,7 @@ export default {
             query: search.value,
           },
           (status: any, response: any) => {
-            let result = response.v2 // 검색 결과의 컨테이너
+            let result = response.v2
             regionResult.value = result.addresses
           },
         )
