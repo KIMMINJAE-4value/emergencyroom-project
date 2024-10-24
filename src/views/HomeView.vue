@@ -76,6 +76,7 @@ export default {
               ),
               map: mapRef.value,
             })
+            setEventOnMarker(marker, element.dutyName)
             mapRef.value.setZoom(12, true)
             markers.value.push(marker)
           },
