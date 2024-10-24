@@ -37,11 +37,6 @@ export default {
       }
     }
 
-    const marker = ref()
-    const onLoadMarker = (markerObject: object) => {
-      marker.value = markerObject
-    }
-
     const onSearchEmergencyRoom = async (addressElements: Array<any>) => {
       const params = {
         Q0: addressElements[0].longName,
@@ -57,7 +52,7 @@ export default {
       markers.value.forEach(marker => {
         marker.setMap(null)
       })
-      marker.value = []
+      markers.value = []
 
       if (result.data.response.body.items.item == undefined) {
         alert('데이터가 없습니다.')
@@ -69,37 +64,17 @@ export default {
                 new naver.maps.LatLng(element.wgs84Lat, element.wgs84Lon),
               )
             }
-            let marker = new naver.maps.Marker({
-              position: new naver.maps.LatLng(
-                element.wgs84Lat,
-                element.wgs84Lon,
-              ),
-              map: mapRef.value,
-            })
-            setEventOnMarker(marker, element.dutyName)
-            mapRef.value.setZoom(12, true)
-            markers.value.push(marker)
+            setExpressMarker(element)
           },
         )
       } else {
-        let marker = new naver.maps.Marker({
-          position: new naver.maps.LatLng(
-            addressResult.value.wgs84Lat,
-            addressResult.value.wgs84Lon,
-          ),
-          map: mapRef.value,
-        })
-        markers.value.push(marker)
-
-        setEventOnMarker(marker, addressResult.value.dutyName)
-
+        setExpressMarker(addressResult.value)
         mapRef.value.setCenter(
           new naver.maps.LatLng(
             addressResult.value.wgs84Lat,
             addressResult.value.wgs84Lon,
           ),
         )
-        mapRef.value.setZoom(12, true)
       }
     }
 
@@ -128,6 +103,21 @@ export default {
       })
     }
 
+    const setExpressMarker = (addressInfo: any) => {
+      let marker = new naver.maps.Marker({
+        position: new naver.maps.LatLng(
+          addressInfo.wgs84Lat,
+          addressInfo.wgs84Lon,
+        ),
+        map: mapRef.value,
+      })
+      markers.value.push(marker)
+
+      setEventOnMarker(marker, addressInfo.dutyName)
+
+      mapRef.value.setZoom(12, true)
+    }
+
     return {
       search,
       regionResult,
@@ -137,7 +127,6 @@ export default {
       onSearchEmergencyRoom,
       onInput,
       onSearchLocation,
-      onLoadMarker,
     }
   },
 }
