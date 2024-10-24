@@ -89,6 +89,9 @@ export default {
           map: mapRef.value,
         })
         markers.value.push(marker)
+
+        setEventOnMarker(marker, addressResult.value.dutyName)
+
         mapRef.value.setCenter(
           new naver.maps.LatLng(
             addressResult.value.wgs84Lat,
@@ -101,6 +104,27 @@ export default {
 
     const onSearchLocation = (data: location) => {
       if (data != undefined) onSearchEmergencyRoom(data.addressElements)
+    }
+
+    const setEventOnMarker = (marker: any, hospitalName: string) => {
+      let contentString = [
+        '<div class="iw_inner">',
+        '   <h3>' + hospitalName + '</h3>',
+
+        '</div>',
+      ].join('')
+
+      let infowindow = new naver.maps.InfoWindow({
+        content: contentString,
+      })
+
+      naver.maps.Event.addListener(marker, 'click', (e: any) => {
+        if (infowindow.getMap()) {
+          infowindow.close()
+        } else {
+          infowindow.open(mapRef.value, marker)
+        }
+      })
     }
 
     return {
