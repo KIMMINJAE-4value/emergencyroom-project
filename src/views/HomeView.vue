@@ -15,6 +15,7 @@ export default {
     const regionResult = ref()
     const addressResult = ref()
     const markers = ref<any[]>([])
+    let saveInfoWindow: any
     const onLoadMap = (map: any) => {
       mapRef.value = map
       const latLng = new window.naver.maps.LatLng(37.51347, 127.041722)
@@ -53,6 +54,8 @@ export default {
         marker.setMap(null)
       })
       markers.value = []
+
+      if (saveInfoWindow != undefined) saveInfoWindow.close()
 
       if (result.data.response.body.items.item == undefined) {
         alert('데이터가 없습니다.')
@@ -94,6 +97,7 @@ export default {
         content: contentString,
       })
 
+      saveInfoWindow = infowindow
       naver.maps.Event.addListener(marker, 'click', (e: any) => {
         if (infowindow.getMap()) {
           infowindow.close()
