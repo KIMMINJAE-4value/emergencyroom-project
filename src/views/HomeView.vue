@@ -15,7 +15,7 @@ export default {
     const regionResult = ref()
     const addressResult = ref()
     const markers = ref<any[]>([])
-    let saveInfoWindow: any
+    let saveInfoWindows = ref<any[]>([])
     const onLoadMap = (map: any) => {
       mapRef.value = map
       const latLng = new window.naver.maps.LatLng(37.51347, 127.041722)
@@ -39,6 +39,16 @@ export default {
     }
 
     const onSearchEmergencyRoom = async (addressElements: Array<any>) => {
+      if (saveInfoWindows.value.length > 0) {
+        saveInfoWindows.value.forEach((infoWindow: any) => {
+          if (infoWindow.getMap()) infoWindow.close()
+        })
+      }
+      markers.value.forEach(marker => {
+        marker.setMap(null)
+      })
+      markers.value = []
+      saveInfoWindows.value = []
       const params = {
         Q0: addressElements[0].longName,
         Q1:
@@ -50,12 +60,6 @@ export default {
       const result = await axios.get(import.meta.env.VITE_API_URI, { params })
 
       addressResult.value = result.data.response.body.items.item
-      markers.value.forEach(marker => {
-        marker.setMap(null)
-      })
-      markers.value = []
-
-      if (saveInfoWindow != undefined) saveInfoWindow.close()
 
       if (result.data.response.body.items.item == undefined) {
         alert('데이터가 없습니다.')
@@ -97,7 +101,7 @@ export default {
         content: contentString,
       })
 
-      saveInfoWindow = infowindow
+      saveInfoWindows.value.push(infowindow)
       naver.maps.Event.addListener(marker, 'click', (e: any) => {
         if (infowindow.getMap()) {
           infowindow.close()
