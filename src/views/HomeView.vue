@@ -39,16 +39,7 @@ export default {
     }
 
     const onSearchEmergencyRoom = async (addressElements: Array<any>) => {
-      if (saveInfoWindows.value.length > 0) {
-        saveInfoWindows.value.forEach((infoWindow: any) => {
-          if (infoWindow.getMap()) infoWindow.close()
-        })
-      }
-      markers.value.forEach(marker => {
-        marker.setMap(null)
-      })
-      markers.value = []
-      saveInfoWindows.value = []
+      refreshMap()
       const params = {
         Q0: addressElements[0].longName,
         Q1:
@@ -124,6 +115,19 @@ export default {
       setEventOnMarker(marker, addressInfo.dutyName)
 
       mapRef.value.setZoom(12, true)
+    }
+
+    const refreshMap = () => {
+      if (saveInfoWindows.value.length > 0) {
+        saveInfoWindows.value.forEach((infoWindow: any) => {
+          if (infoWindow.getMap()) infoWindow.close()
+        })
+      }
+      markers.value.forEach(marker => {
+        marker.setMap(null)
+      })
+      markers.value = []
+      saveInfoWindows.value = []
     }
 
     return {
